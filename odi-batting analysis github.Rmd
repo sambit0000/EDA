@@ -1,0 +1,78 @@
+---
+title: "odi-batting"
+author: "sambit s misra"
+date: "4 February 2018"
+output: html_document
+---
+# importing the dataset
+```{r}
+odi = read.csv("C:/Users/Administrator/Documents/sambit files/odi-batting.csv",header=T)
+```
+
+# checking data type of variables
+```{r}
+str(odi)
+summary(odi)
+```
+
+# importing the libraries
+```{r}
+library(knitr)
+library(dplyr)
+library(lubridate)
+```
+
+# removing na values
+```{r}
+odi = na.omit(odi)
+```
+
+# top 10 country with maximum players 
+```{r}
+country_players = odi %>% group_by(Country) %>% summarise(totalplayers=n_distinct(Player)) %>% arrange(-totalplayers)
+kable(country_players[1:10,])
+```
+
+# we see that england has the highest number of player records followed by india ,australia etc. intersting insight is that zimbabwe and bangladesh have more player records than south africa.
+
+# top 10 country wise runs scored
+```{r}
+
+country_wise_runs = odi %>% group_by(Country) %>% summarise(totalruns = sum(Runs)) %>% arrange(-totalruns)
+kable(country_wise_runs[1:10,])
+```
+
+# we see that india has the highest no of runs scored by its players followed closely by australia. within the test playing nations there is a significant decrease in runs scored after pakistan and england. zimbabwe and bangladesh are way below the rest.
+
+# top 10 country with highest average score rate
+```{r}
+country_wise_scorerate = odi %>% group_by(Country) %>% summarise(mean_scorerate = mean(ScoreRate)) %>% arrange(-mean_scorerate)
+kable(country_wise_scorerate[1:10,])
+```
+
+# there is an interesting insight here. south africa which was in the bottom five in runs scored is in the top of list in average score rate of its players. india which was in top of list in runs scored is in 4th place in this list. this means that indian players tend to play less aggressively than others. they play safe to score more runs. interestingly afghanistan is in the list.
+
+# top 10 country with maximum number of matches played in 2010
+```{r}
+odi$MatchDate = as.Date(odi$MatchDate,format="%m-%d-%Y")
+country_match = odi %>% filter(year(MatchDate)==2010)%>% group_by(Country) %>% summarise(totalmatch=n_distinct(MatchDate)) %>% arrange(-totalmatch)
+kable(country_match[1:10,])
+```
+
+# bangladesh and india have played the maximum number of matches in 2010. interstingly zimbabwe has played more number of matches than england,pakistan and west indies in 2010. also ireland surprisingly is in the list.
+
+# top 10 country with maximum number of matches played in lords
+```{r}
+country_lords = odi %>% filter(Ground=="Lord's") %>% group_by(Country) %>% summarise(lords_match=n_distinct(MatchDate)) %>% arrange(-lords_match)
+kable(country_lords[,])
+```
+
+# as expected home country england has played the highest number of matches in lord's. india has played 7 matches in lord's including the famous natwest cup final win over england in 2002.
+
+# top 10 country with max no of matches played against india
+```{r}
+country_against_india = odi %>% filter(Versus=="India") %>% group_by(Country) %>% summarise(against_india=n_distinct(MatchDate)) %>% arrange(-against_india)
+kable(country_against_india[1:10,])
+```
+
+# we see asian countries like srilanka and pakistan have played more number of matches against india than other countries have played against india. a possible explanation to it can be the revenue they get because of a series against india.
