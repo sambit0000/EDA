@@ -76,3 +76,50 @@ kable(country_against_india[1:10,])
 ```
 
 # we see asian countries like srilanka and pakistan have played more number of matches against india than other countries have played against india. a possible explanation to it can be the revenue they get because of a series against india.
+
+# top 10 players who scored maximum runs
+```{r}
+player_runs = odi %>% group_by(Player) %>% summarise(totalruns=sum(Runs)) %>% arrange(-totalruns)
+kable(player_runs[1:10,])
+```
+
+# we see that sachin is way ahead of others in total runs scored in odi. ganguly and dravid are the other indians  there in top 10 scorers list.
+
+# top 10 players with highest average score rate
+```{r}
+player_scorerate = odi %>% group_by(Player) %>% summarise(avg_scorerate = mean(ScoreRate)) %>% arrange(-avg_scorerate)
+kable(player_scorerate[1:10,])
+```
+
+# scorerate defines how much runs the player scored in 100 balls faced. it tells about how aggressive the batsman is. we can see no indian batsman in the list. this shows that indian batsman are rarely aggressive batsmen. they play more of a stable innings.
+
+# top 10 players who played maximum matches in 2010
+```{r}
+player_match_2010 = odi %>% filter(year(MatchDate)==2010) %>% group_by(Player) %>% summarise(totalmatch=n()) %>% arrange(-totalmatch)
+kable(player_match_2010[1:10,])
+```
+
+# virat kohli played 24 matches in 2010. but india played 27 matches in 2010. this means that kohli missed 3 matches due to injury or probably dropped from squad. bangladesh played 27 matches in 2010 and imrul and shakib played all the matches.
+
+# top 10 players who played maximum matches in lord's
+```{r}
+player_lords = odi %>% filter(Ground=="Lord's") %>% group_by(Player) %>% summarise(lordsmatch=n()) %>% arrange(-lordsmatch)
+kable(player_lords[1:10,])
+```
+
+# as expected all the 10 players are english players who played maximum number of matches in  lord's.
+
+# top 10 players who played most matches against india
+```{r}
+player_against_india = odi %>% filter(Versus=="India") %>% group_by(Player) %>% summarise(totalmatch=n()) %>% arrange(-totalmatch)
+kable(player_against_india[1:10,])
+```
+
+# most players in this list are asian players who played most number of matches against india. ricky ponting is the only exception in this list. 
+
+# top 10 players of each country by runs
+```{r}
+country_top_scorer = odi %>% group_by(Country,Player) %>% summarise(totalruns=sum(Runs)) %>% arrange(-totalruns) %>% top_n(10) %>% arrange(Country)
+```
+
+# this gives the top 10 players of each country by total runs scored by them. 
