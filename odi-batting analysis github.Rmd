@@ -123,3 +123,148 @@ country_top_scorer = odi %>% group_by(Country,Player) %>% summarise(totalruns=su
 ```
 
 # this gives the top 10 players of each country by total runs scored by them. 
+
+# top 10 country with most centuries
+```{r}
+country_century = odi %>% filter(Runs>=100) %>% group_by(Country) %>% summarise(centuries=n()) %>% arrange(-centuries)
+kable(country_century[1:10,])
+```
+
+# we see that all the test playing nations are here in this list of number of centuries scored by each country. india is leading all with 190 centuries and there is a significant difference between england and newzealand.  
+
+# top 10 country with most half centuries
+```{r}
+country_halfcentury = odi %>% filter(Runs>=50, Runs<=99) %>% group_by(Country) %>% summarise(halfcenturies=n()) %>% arrange(-halfcenturies)
+kable(country_halfcentury[1:10,])
+```
+
+# we see here that australia is leading all in number of half centuries scored. india which was top in number of centuries scored is second in this list. here also all test playing nations are there in top 10.
+
+
+# top 10 country with most ducks
+```{r}
+country_ducks = odi %>% filter(Runs==0) %>% group_by(Country) %>% summarise(ducks=n()) %>% arrange(-ducks)
+kable(country_ducks[1:10,])
+```
+
+# we see here that pakistan leads all in number of ducks scored. india is second in the list.for obvious reason all test playing nations are there in top 10 in this list beacuse these countries play the maximum matches in one day international. 
+
+# top 10 players with most centuries
+```{r}
+player_century = odi %>% filter(Runs>=100) %>% group_by(Player) %>% summarise(centuries=n()) %>% arrange(-centuries)
+kable(player_century[1:10,])
+```
+
+# sachin is one of the all time greatest players of modern cricket. he is leading all with 48 odi centuries according to our data.in reality he has 49 odi centuries.there are 2 indians in top 10 list of number of centuries .bengal tiger ganguly is the other indian in the list. brian lara another legendary batsman has 19 centuries. 
+
+# top 10 players with most half centuries
+```{r}
+player_halfcentury = odi %>% filter(Runs>=50,Runs<=99) %>% group_by(Player) %>% summarise(halfcenturies=n()) %>% arrange(-halfcenturies)
+kable(player_halfcentury[1:10,])
+```
+
+# sachin is also leading the number of half centuries scored list. dravid and ganguly are the other indians in this list. sachin , jayasuriya , ganguly, ponting are the players who are common in both the list of top 10 players of number of centuries and half centuries scored. 
+
+# top 10 players with most ducks
+```{r}
+player_ducks = odi %>% filter(Runs==0) %>% group_by(Player) %>% summarise(ducks=n()) %>% arrange(-ducks)
+kable(player_ducks[1:10,])
+```
+
+# as expected most of the players in this list are bowlers . but surprisingly jayasuriya,jayawardene who are batsmen  are also in this list of number of ducks scored.  
+
+# country wise top 10 players by number of centuries scored
+```{r}
+country_player_century = odi %>% filter(Runs>=100) %>% group_by(Country,Player) %>% summarise(centuries=n()) %>% arrange(-centuries) %>% top_n(10) %>% arrange(Country)
+kable(country_player_century[,])
+```
+
+# this list is about the country wise player records of number of centuries scored. 
+
+# country wise top 10 players by number of half centuries scored
+```{r}
+country_player_halfcentury = odi %>% filter(Runs>=50,Runs<=99) %>% group_by(Country,Player) %>% summarise(halfcenturies=n()) %>% arrange(-halfcenturies) %>% top_n(10) %>% arrange(Country)
+kable(country_player_halfcentury[,])
+```
+
+# this list is about the country wise player record of number of half centuries scored. 
+
+# country wise top 10 players by number of ducks
+```{r}
+country_player_ducks = odi %>% filter(Runs==0) %>% group_by(Country,Player) %>% summarise(ducks=n()) %>% arrange(-ducks) %>% top_n(10) %>% arrange(Country)
+kable(country_player_ducks[,])
+```
+
+# this list is about the country wise record of players by number of ducks scored. 
+
+# country wise record of  important players with their centuries,half centuries and ducks scored
+```{r}
+century_halfcentury = merge(country_player_century,country_player_halfcentury)
+century_halfcentury_ducks = merge(century_halfcentury,country_player_ducks)
+```
+
+# the first data frame is about the  common players records of centuries and half centuries scored. 
+# the second data frame is about the  common player records of centuries,half centuries and ducks scored. 
+
+# country wise top 10 players by highest average score rate
+```{r}
+country_player_scorerate = odi %>% group_by(Country,Player) %>% summarise(avg_scorerate=mean(ScoreRate)) %>% arrange(-avg_scorerate) %>% top_n(10) %>% arrange(Country)
+kable(country_player_scorerate[,])
+```
+
+# this list is about the country wise player record of average score rate.
+
+# creating new columns for centuries,half centuries, ducks
+```{r}
+odi = odi %>% mutate(centuries=if_else(Runs>=100,1,0))
+odi = odi %>% mutate(halfcentury=if_else(Runs>=50&Runs<=99,1,0))
+odi = odi %>% mutate(ducks=if_else(Runs==0,1,0))
+```
+
+# country wise all player record of centuries,half centuries and ducks
+```{r}
+country_allplayer = odi %>% group_by(Country,Player) %>% summarise(century=sum(centuries),HalfCentury=sum(halfcentury),Ducks=sum(ducks)) %>% arrange(Country)
+kable(country_allplayer[,])
+```
+
+# this is the country wise record of all players in centuries,half centuries,ducks scored.
+
+# top 10 grounds by total runs scored
+```{r}
+ground_runs = odi %>% group_by(Ground) %>% summarise(totalruns = sum(Runs)) %>% arrange(-totalruns)
+kable(ground_runs[1:10,])
+```
+
+# this list is about the top 10 grounds by runs scored. sharjah stadium has the highest runs scored. eden garden is the only  indian stadium in the top 10 list.  so we can say that sharjah is a high scoring ground. 5 australian grounds are there in the top 10 list.this is surprising because most of australian pitches are bouncy and fast bowling pitches.
+
+# countries with most runs scored against them
+```{r}
+versus_runs = odi %>% group_by(Versus) %>% summarise(totalruns=sum(Runs)) %>% arrange(-totalruns)
+kable(versus_runs[1:10,])
+```
+
+# india has scored the maximum runs among all countries. also india has conceded the maximum runs . the difference for india between runs scored and runs conceded is very less. but australia has scored more runs and conceded less runs. so overall performance of australia is better compared to india. 
+
+# top 10 countries who scored most runs against india
+```{r}
+versus_india = odi %>% filter(Versus=="India") %>% group_by(Country) %>% summarise(totalruns=sum(Runs)) %>% arrange(-totalruns)
+kable(versus_india[1:10,])
+```
+
+#  srilanka , pakistan have scored the most runs  against india respectively. this is because these countries play more number of series aginst india.  
+
+# top 10 batsman by batting avergae
+```{r}
+player_average = odi %>% group_by(Player) %>% summarise(avg=sum(Runs)/n()) %>% arrange(-avg)
+kable(player_average[1:10,])
+```
+
+# kim barnett has the highest batting average among all the batsmen. gagan khoda is the only indian in the list. hashim amla and ten doeschate are the only current batsmen in the list. 
+
+# country wise player record by batting average
+```{r}
+country_player_average = odi %>% group_by(Country,Player) %>% summarise(avg=sum(Runs)/n()) %>% arrange(-avg) %>% top_n(10) %>% arrange(Country)
+kable(country_player_average[,])
+```
+
+# this is the country wise record of players based on batting average.sachin,kohli,ganguly,gambhir,dhoni,dravid are there in top 10 players list for india.
