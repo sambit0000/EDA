@@ -20,6 +20,7 @@ summary(odi)
 library(knitr)
 library(dplyr)
 library(lubridate)
+library(ggplot2)
 ```
 
 # removing na values
@@ -229,6 +230,14 @@ kable(country_allplayer[,])
 
 # this is the country wise record of all players in centuries,half centuries,ducks scored.
 
+# top 10 grounds by total matches played
+```{r}
+ground_match = odi %>% group_by(Ground) %>% summarise(totalmatch=n_distinct(MatchDate)) %>% arrange(-totalmatch)
+kable(ground_match[1:10,])
+```
+
+# sharjah has highest number of matches played. earlier in 1990s most of the matches were played in sharjah. sachin scored many memorable knocks in sharjah.5 australian grounds are there in this list including 2 indian grounds.
+
 # top 10 grounds by total runs scored
 ```{r}
 ground_runs = odi %>% group_by(Ground) %>% summarise(totalruns = sum(Runs)) %>% arrange(-totalruns)
@@ -268,3 +277,88 @@ kable(country_player_average[,])
 ```
 
 # this is the country wise record of players based on batting average.sachin,kohli,ganguly,gambhir,dhoni,dravid are there in top 10 players list for india.
+
+# visualizing the results
+
+# bar chart of country wise count of players in descending order of total players
+```{r}
+ggplot(country_players[1:10,],aes(x=reorder(Country,-totalplayers),y=totalplayers))+geom_bar(stat="identity",fill="red")+xlab("country")+ylab("total players")+ggtitle("top 10 country in players count")
+```
+
+# bar chart of top 10 countries by total runs scored in descending order
+```{r}
+ggplot(country_wise_runs[1:10,],aes(x=reorder(Country,-totalruns),y=totalruns))+geom_bar(stat = "identity",fill="blue")+xlab("country")+ylab("total runs scored")+ggtitle("top 10 countries by total runs scored")
+```
+
+# horizontal bar chart of top 10 country with highest average score rate
+```{r}
+ggplot(country_wise_scorerate[1:10,],aes(x=reorder(Country,mean_scorerate),y=mean_scorerate))+geom_bar(stat="identity",fill="dark green")+xlab("countries")+ylab("mean score rate")+ggtitle("top 10 country with highest average score rate")+coord_flip()
+```
+
+# bar chart of top 10 country with max matches played in 2010
+```{r}
+ggplot(country_match[1:10,],aes(x=reorder(Country,totalmatch),y=totalmatch))+geom_bar(stat="identity",fill="orange")+xlab("country")+ylab("total match")+ggtitle("top 10 countries with max matches played in year 2010")
+```
+
+# bar chart of top countries with max matches played in lord's
+```{r}
+ggplot(country_lords,aes(x=Country,y=lords_match))+geom_bar(stat="identity",fill="violet")+xlab("country")+ylab("no of matches played in lords")+ggtitle("top countries with max matches played in lord's")
+```
+
+# bar chart of top 10 countries with max matches played against india
+```{r}
+ggplot(country_against_india[1:10,],aes(x=reorder(Country,against_india),y=against_india))+geom_bar(stat="identity",fill="pink")+xlab("countries")+ylab("no of matches played against india")
+```
+
+# bar chart of players with highest odi runs
+```{r}
+ggplot(player_runs[1:10,],aes(x=reorder(Player,-totalruns),y=totalruns))+geom_bar(stat="identity",fill="chocolate")+xlab("top players")+ylab("runs scored in odi")+ggtitle("top 10 players with highest runs scored in odi")+theme(axis.text.x = element_text(angle = 45))
+```
+
+# bar chart of top 10 players with highest average score rate
+```{r}
+ggplot(player_scorerate[1:10,],aes(x=Player,y=avg_scorerate))+geom_bar(stat="identity",fill="brown2")+theme(axis.text.x = element_text(angle = 90))+xlab("players")+ylab("higjest average score rate ")+ggtitle("top 10 players with highest average score rate")
+```
+
+# grouped bar chart of country wise top 10 players by total runs scored
+```{r}
+ggplot(country_top_scorer,aes(x=Country,y=totalruns))+geom_bar(aes(fill=Player),position = "dodge",stat="identity") + theme(legend.position = "None")+theme(axis.text.x = element_text(angle = 90))+xlab("countries with top 10 players")+ylab("total runs scored by players")+ggtitle("country wise top 10 players by total runs scored")
+
+```
+
+# bar chart of top 10 players by centuries scored
+```{r}
+ggplot(player_century[1:10,],aes(x=Player,y=centuries))+geom_bar(stat="identity",fill="chartreuse4")+xlab("players")+ylab("centuries made in odi")+ggtitle("top 10 players by total odi centuries made")+theme(axis.text.x = element_text(angle = 45))
+```
+
+# grouped bar chart of country wise top 10 players by centuries made
+```{r}
+ggplot(country_player_century,aes(x=Country,y=centuries))+geom_bar(aes(fill=Player),position="dodge",stat="identity")+theme(legend.position = "none")+theme(axis.text.x = element_text(angle=90))+xlab("countries with top 10 players")+ylab("no of odi centuries")+ggtitle("country wise top 10 players by odi centuries made")
+```
+
+# grouped bar chart of country wise top 10 players by average score rate
+```{r}
+ggplot(country_player_scorerate,aes(x=Country,y=avg_scorerate))+geom_bar(aes(fill=Player),position="dodge",stat="identity")+theme(legend.position = "none")+theme(axis.text.x = element_text(angle=90))+xlab("countries with top 10 players")+ylab("average score rate of players")+ggtitle("country wise top 10 players by average score rate")
+```
+
+# bar chart of top 10 grounds by total matches played
+```{r}
+ggplot(ground_match[1:10,],aes(x=reorder(Ground,-totalmatch),y=totalmatch))+geom_bar(stat="identity",fill="cornflowerblue")+xlab("ground")+ylab("no of matches played")+ggtitle("top 10 grounds by no of matches played")+theme(axis.text.x = element_text(angle = 30))
+```
+
+# bar chart of top 10 countries  by total runs scored against india
+```{r}
+ggplot(versus_india[1:10,],aes(x=reorder(Country,-totalruns),y=totalruns))+geom_bar(stat="identity",fill="darkgoldenrod")+xlab("country")+ylab("total runs scored against india")+ggtitle("top 10 countries by total runs scored against india")+theme(axis.text.x = element_text(angle = 75),)
+```
+
+# bar chart of top 10 players by batting average
+```{r}
+ggplot(player_average[1:10,],aes(x=reorder(Player,-avg),y=avg))+geom_bar(stat = "identity",fill="darkolivegreen3")+theme(axis.text.x = element_text(angle = 90))+xlab("players")+ylab("batting average")+ggtitle("top 10 players by highest batting average")
+```
+
+
+# grouped bar chart of country wise top 10 players by batting average
+```{r}
+ggplot(country_player_average,aes(x=Country,y=avg))+geom_bar(aes(fill=Player),position = "dodge",stat = "identity")+theme(axis.text.x = element_text(angle = 90))+xlab("country wise top 10 players")+ylab("batting average")+ggtitle("country wise top 10 players by batting average")+theme(legend.position = "none")
+```
+
